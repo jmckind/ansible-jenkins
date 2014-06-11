@@ -1,0 +1,24 @@
+---
+# file: roles/jenkins/tasks/main.yml
+
+- name: ensure the jenkins repository key is installed
+  apt_key: url={{ jenkins_repo_key }} state=present
+
+- name: ensure the jenkins repository is configured
+  apt_repository: repo='deb http://pkg.jenkins-ci.org/debian binary/' state=present
+
+- name: ensure required packages are present
+  apt: name={{ item }} state=present
+  with_items:
+    - jenkins
+
+- name: ensure the Jenkins site configuration for nginx is present
+  template: src=nginx/jenkins.j2 dest=/etc/nginx/sites-available/jenkins
+
+- name: ensure the Jenkins site for nginx is enabled
+  file: src=/etc/nginx/sites-available/jenkins dest=/etc/nginx/sites-enabled/jenkins state=link
+  notify: restart nginx
+
+- name: ensure the default site for nginx is disabled
+  file: path=/etc/nginx/sites-enabled/default state=absent
+  notify: restart nginx

@@ -1,0 +1,5 @@
+---
+# file: group_vars/all
+
+jenkins_repo_key: http://pkg.jenkins-ci.org/debian/jenkins-ci.org.key
+jenkins_hostname: "{{ ansible_fqdn }}"
